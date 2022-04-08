@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <title>Chatty! </title>
+  </head>
+  <body>
+    <h1>Chatty! </h1>
+
+    <label>Question : </label>
+    <textarea rows="4" id="question_id"></textarea>
+
+    <button onclick="questionFired()"> Shoot it </button>
+
+    <label>Answer: </label>
+    <textarea rows="4" id="answer_id"></textarea>
+
+    <br><br><br>
+    <button onclick = "clear_fields()" id="clear_id">CLEAR </button>
+  </body>
+
+  <script>
+
+    function questionFired()
+    {
+
+      questionValue = document.getElementById("question_id").value
+
+      // document.getElementById("answer_id").value = "Weather is very sunny today ! "
+
+      const { spawn } = require('child_process');
+      const child = spawn('python3 q_and_a_engine.py "'+ questionValue +'"', {shell: true});
+      child.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+        document.getElementById("answer_id").value = data
+      });
+        
+      child.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+        alert("Stderr " + data)
+      });
+        
+      child.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+      });
+
+      
+
+
+    }
+
+    function clear_fields()
+    {
+      document.getElementById("question_id").value = ''
+      document.getElementById("answer_id").value = ''
+    }
+  </script>
+</html>
